@@ -15,10 +15,8 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import schema.KafkaMessageSchema;
 import schema.KafkaMessageSinkSchema;
 
@@ -80,8 +78,8 @@ public class StreamingJob {
                     Integer recordId = kafkaMessage.after != null ? kafkaMessage.after.record_id : kafkaMessage.before != null ? kafkaMessage.before.record_id : null;
                     return recordId != null ? recordId.toString() : "defaultKey";
                 }).window(TumblingProcessingTimeWindows.of(Time.milliseconds(2500),
-                        Time.milliseconds(500)))//.sum("priceAmount");
-                .apply((WindowFunction<KafkaMessage, GroupedData, String, TimeWindow>) new GroupByRecordIdAndOrganizationIdProcessFunction());
+                        Time.milliseconds(500)))
+                .apply(new GroupByRecordIdAndOrganizationIdProcessFunction());
 
         KafkaSink<GroupedData> sink = KafkaSink.<GroupedData>builder()
                 .setBootstrapServers("localhost:9092")
