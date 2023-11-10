@@ -28,6 +28,15 @@ public class KafkaMessageSchema extends AbstractDeserializationSchema<KafkaMessa
      */
     @Override
     public KafkaMessage deserialize(byte[] message) throws IOException {
-        return objectMapper.readValue(message, KafkaMessage.class);
+        try {
+            if (message == null) {
+                // Handle null message
+                return null;
+            }
+            return objectMapper.readValue(message, KafkaMessage.class);
+        } catch (IOException e) {
+            // Handle deserialization exception
+            return null;  // Return null or a default value as needed
+        }
     }
 }

@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 
-@SuppressWarnings({"deprecation", "unused"})
+@SuppressWarnings({"unused"})
 public class StreamingJob {
     private SourceFunction<Long> source;
     private SinkFunction<Long> sink;
@@ -38,7 +38,6 @@ public class StreamingJob {
     public StreamingJob() {
     }
 
-    @SuppressWarnings("unchecked")
     public void execute() throws Exception {
         Configuration conf = new Configuration();
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
@@ -82,7 +81,7 @@ public class StreamingJob {
                 .apply(new GroupByRecordIdAndOrganizationIdProcessFunction());
 
         KafkaSink<GroupedData> sink = KafkaSink.<GroupedData>builder()
-                .setBootstrapServers("localhost:9092")
+                .setBootstrapServers("kafka:9092")
                 .setRecordSerializer(new KafkaMessageSinkSchema("flinkout"))
                 .setDeliverGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
                 .build();
